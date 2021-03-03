@@ -11,9 +11,11 @@ library(shiny)
 library(tidyverse)
 library(shinyWidgets)
 library(magrittr)
+library(tableHTML)
 
 
-datos=read.csv("DatosNBA.csv", sep=";", dec=".")
+datosA=read.csv("DatosNBA.csv", sep=";", dec=".")
+datos=datosA[,2:30]
 datos %<>% mutate_at(c("Player", "Pos","Age","Tm"), as.factor)
 datos_Player = levels(datos$Player) %>% str_sort()
 datos_Pos = levels(datos$Pos) %>% str_sort()
@@ -34,7 +36,21 @@ plotPanel <- tabPanel("Plot",
                                  )),
                           column(width = 4,
                                  verbatimTextOutput("plot_hoverinfo")
+                          
+                                 
+                                 
+                                 ),
+                          
+                          
+                          fluidPage(
+                              
+                              tags$h2("Add a shiny app background image"),
+                              setBackgroundImage(
+                                  src = "https://cdn.hipwallpaper.com/m/60/78/3NC5fa.jpg",
+                              )
                           )
+                          
+                          
                       )
 )
 myHeader <- div(
