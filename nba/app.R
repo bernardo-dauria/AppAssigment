@@ -24,7 +24,16 @@ datos_Tm = levels(datos$Tm) %>% str_sort()
 
 
 
-dataPanel <- tabPanel("Data Players",
+dataPanel <- tabPanel("Data Players",     tags$style(HTML("
+      @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+      .navbar-default {
+    background-color: beige !important;
+}
+
+.tabPanel-default:hover {
+    background-color: lightslategray !important;
+    color: yellow;
+}")),
                       tableOutput("data")
 )
 
@@ -41,7 +50,7 @@ plotPanel <- tabPanel("Plot",
                                  
                                  ),
                           
-                          
+
                           fluidPage(
                               
                               tags$h2("Add a shiny app background image"),
@@ -82,7 +91,10 @@ myHeader <- div(
 
 
 
+
+
 ui <- navbarPage("shiny App",
+            
                  dataPanel,
                  plotPanel,
                  header = myHeader
@@ -93,7 +105,7 @@ server <- function(input, output, session) {
     datos2 <- reactive({datos %>%
                 filter( Age %in% input$selAge,Pos %in% input$selPos,Tm %in% input$selTm)})
     output$data <- renderTable(datos2());
-
+    
     }
     
     
