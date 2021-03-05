@@ -21,8 +21,8 @@ datos_Player = levels(datos$Player) %>% str_sort()
 datos_Pos = levels(datos$Pos) %>% str_sort()
 datos_Age = levels(datos$Age) %>% str_sort()
 datos_Tm = levels(datos$Tm) %>% str_sort()
-
-
+list_choicesr=colnames(datos)
+list_choices=list_choicesr[5:29]
 
 dataPanel <- tabPanel("Data Players",     tags$style(HTML("
       @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
@@ -34,8 +34,28 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
     background-color: lightslategray !important;
     color: yellow;
 }")),
-                      tableOutput("data")
-)
+                      
+                      tabsetPanel(type = "tabs",
+                                  
+                                  tabPanel("Table", tableOutput("data")),
+                                  tabPanel("Plot", plotOutput("histSummary"),
+                                           selectInput("select", label = h3("Plot by Stat"), 
+                                                                                         choices = list_choices,
+                                                                                         selected = 1),),
+                                  tabPanel("movidas", tableOutput("histTable")),
+                                  tags$style(HTML("
+      @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+      .tabsetPanel-default {
+    background-color: beige !important;
+    color: white !important;
+      }
+
+
+.tabsetPanel-default:hover {
+    background-color: lightslategray !important;
+    color: yellow;
+}"))
+                      ))
 
 plotPanel <- tabPanel("Plot",
                       fluidRow(
@@ -85,6 +105,7 @@ myHeader <- div(
         choices = datos_Tm,
         selected = c(datos_Tm[1])
     )
+    
 )
 
 
@@ -105,7 +126,7 @@ server <- function(input, output, session) {
     datos2 <- reactive({datos %>%
                 filter( Age %in% input$selAge,Pos %in% input$selPos,Tm %in% input$selTm)})
     output$data <- renderTable(datos2());
-    
+    output$histSummary <- renderPlot({hist(datos$PTS %>% unlist() )})
     }
     
     
