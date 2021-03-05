@@ -35,24 +35,33 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
     color: yellow;
 }")),
                       
-                      tabsetPanel(type = "tabs",
-                                  
+                      tabsetPanel(type = "tabs",id="SET",
+                                             
                                   tabPanel("Table", tableOutput("data")),
-                                  tabPanel("Plot", plotOutput("histSummary"),
+                                  
+
+                                  tabPanel("Plot" ,
+                                           sidebarLayout(position="right",
+
+                                                          sidebarPanel( 
                                            selectInput("select", label = h3("Plot by Stat"), 
                                                                                          choices = list_choices,
-                                                                                         selected = 1),),
+                                                                                         selected = 1)
+                                                ),
+                                           mainPanel(plotOutput("histSummary"))
+                                           
+                                            )
+                                           ),
                                   tabPanel("movidas", tableOutput("histTable")),
                                   tags$style(HTML("
       @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
-      .tabsetPanel-default {
-    background-color: beige !important;
-    color: white !important;
-      }
+       
+                a{color: black !important;}
+    
+      
 
 
-.tabsetPanel-default:hover {
-    background-color: lightslategray !important;
+a:hover {
     color: yellow;
 }"))
                       ))
@@ -126,7 +135,9 @@ server <- function(input, output, session) {
     datos2 <- reactive({datos %>%
                 filter( Age %in% input$selAge,Pos %in% input$selPos,Tm %in% input$selTm)})
     output$data <- renderTable(datos2());
-    output$histSummary <- renderPlot({hist(datos$PTS %>% unlist() )})
+    a=reactive(as.vector(as.matrix(datos%>% select(input$select))))
+
+    output$histSummary <- renderPlot(hist(a()))
     }
     
     
