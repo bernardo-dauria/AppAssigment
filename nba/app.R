@@ -60,9 +60,9 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                                                        choices = list_choices,
                                                                        selected = 1),
                                                            
-                                                           selectInput("select3", label = h3("Plot by Stat 1"), 
+                                                           selectInput("select3", label = h3("Plot by Stat 2"), 
                                                                        choices = list_choices,
-                                                                       selected = 1)
+                                                                       selected = 5)
                                                          ),
                                                          
                                                       
@@ -159,8 +159,8 @@ server <- function(input, output, session) {
     b=reactive(as.vector(as.matrix(datos%>% select(input$select2))))
     c=reactive(as.vector(as.matrix(datos%>% select(input$select3))))
     
-    output$histSummary <- renderPlot(hist(a(),main="Histogram of data player"))
-    output$PlotPlayer <- renderPlot(plot(x=b(),y=c(),main="Plot of data player",col = "#00AFBB"))
+    output$histSummary <- renderPlot(hist(a(),main="Histogram of data player",xlab=input$select))
+    output$PlotPlayer <- renderPlot(plot(x=b(),y=c(),main="Plot of data player",xlab=input$select2,ylab=input$select3,col = "#00AFBB"))
     output$info <- renderText({
       paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
     })
