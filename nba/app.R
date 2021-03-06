@@ -12,6 +12,7 @@ library(tidyverse)
 library(shinyWidgets)
 library(magrittr)
 library(tableHTML)
+library(shinythemes)
 
 
 datosA=read.csv("DatosNBA.csv", sep=";", dec=".")
@@ -95,14 +96,19 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                            sidebarLayout(position="right",
                                                          
                                                          sidebarPanel( 
+                                                           
+
                                                            selectInput("select2", label = h3("Plot by Stat 1"), 
                                                                        choices = list_choices,
                                                                        selected = 1),
                                                            
                                                            selectInput("select3", label = h3("Plot by Stat 2"), 
                                                                        choices = list_choices,
-                                                                       selected = 5)
-                                                         ),
+                                                                       selected = 5),
+                                                           downloadButton("report", "Generate report"),           
+                                                           
+                                                         
+                                                           ),
                                                          
                                                       
                                            mainPanel(plotOutput("PlotPlayer", click = "plot_click"),
@@ -125,23 +131,30 @@ a:hover {
 
 
 
-plotPanel <- tabPanel("Plot",
-                      fluidRow(
-                          column(width = 8,
-                                 plotOutput("plot",
-                                            hover = hoverOpts(id = "plot_hover", delayType = "throttle"),
-                                 )),
-                          column(width = 4,
-                                 verbatimTextOutput("plot_hoverinfo")
-                          
-                                 
-                                 
-                                 ),
-                          
+plotPanel <- tabPanel("Densities",
+                      sidebarLayout(position="right",
+                                    
+                                    sidebarPanel( 
+                                      
+                                      
+                                      
+                                      
+                                      selectInput("select4", label = h3("Plot by Stat 2"), 
+                                                  choices = list_choices,
+                                                  selected = 5),
+
+                                      
+                                    ),
+                                    
+                                    
+                                    mainPanel(plotly::plotlyOutput("plotly"))
+                      ), 
+                    
+                                              
+                       
 
                           fluidPage(
-                              
-                              tags$h2("Add a shiny app background image"),
+                            theme = shinytheme("cerulean"),
                               setBackgroundImage(
                                   src = "https://cdn.hipwallpaper.com/m/60/78/3NC5fa.jpg",
                               )
@@ -149,7 +162,7 @@ plotPanel <- tabPanel("Plot",
                           
                           
                       )
-)
+
 myHeader <- div(
     
     selectInput(
@@ -185,6 +198,7 @@ myHeader <- div(
 ui <- navbarPage("shiny App",
             
                  dataPanel,
+
                  plotPanel
 )
 
@@ -196,6 +210,7 @@ server <- function(input, output, session) {
     a=reactive(as.vector(as.matrix(datos%>% select(input$select))))
     b=reactive(as.vector(as.matrix(datos%>% select(input$select2))))
     c=reactive(as.vector(as.matrix(datos%>% select(input$select3))))
+    d=reactive(as.vector(as.matrix(datos%>% select(input$select4))))
     
     output$histSummary <- renderPlot(hist(a(),main="Histogram of data player",xlab=input$select))
     output$PlotPlayer <- renderPlot(plot(x=b(),y=c(),main="Plot of data player",xlab=input$select2,ylab=input$select3,col = "#00AFBB"))
@@ -203,6 +218,41 @@ server <- function(input, output, session) {
       paste0(input$select2, "=", input$plot_click$x, "\n",input$select3,"=", input$plot_click$y)
     })
     
+    output$plotly <- plotly::renderPlotly(
+      datos %>% ggplot(aes(x = d())) +  
+        geom_density(aes(group = Pos, 
+                         colour = Pos, 
+                         fill = Pos),
+                     alpha = 0.2))
+    
+    
+    
+    
+    output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        tempReport <- file.path(tempdir(), "report.Rmd")
+        file.copy("report.Rmd", tempReport, overwrite = TRUE)
+        
+        # Set up parameters to pass to Rmd document
+        params <- list(
+          Namex=isolate(input$select2),
+          Namey=isolate(input$select3)
+          )
+        
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv())
+        )
+      }
+    )
     
     
     }
