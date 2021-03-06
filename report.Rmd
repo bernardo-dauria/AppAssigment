@@ -1,0 +1,30 @@
+title: "report"
+author: "Javier Esteban Aragoneses"
+date: "6/3/2019"
+output: html_document
+params: 
+ Namex:"aa"
+ Namey:"input$select3"
+---
+```{r include=FALSE}
+library(tidyverse)
+
+datosA=read.csv("DatosNBA.csv", sep=";", dec=".")
+datos=datosA[,2:30]
+datos %<>% mutate_at(c("Player", "Pos","Age","Tm"), as.factor)
+datos_Player = levels(datos$Player) %>% str_sort()
+datos_Pos = levels(datos$Pos) %>% str_sort()
+datos_Age = levels(datos$Age) %>% str_sort()
+datos_Tm = levels(datos$Tm) %>% str_sort()
+```
+
+
+
+
+```{r echo=FALSE}
+x=datos%>% select(params$Namex)
+y=datos%>% select(params$Namey)
+
+    plot(x=x,y=y,main="Plot of data player",xlab=Namex,ylab=input$select3,col = "#00AFBB")
+```
+
