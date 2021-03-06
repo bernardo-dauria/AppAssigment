@@ -40,7 +40,7 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                   tabPanel("Table", tableOutput("data")),
                                   
 
-                                  tabPanel("Plot" ,
+                                  tabPanel("Histogram" ,
                                            sidebarLayout(position="right",
 
                                                           sidebarPanel( 
@@ -52,7 +52,24 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                            
                                             )
                                            ),
-                                  tabPanel("movidas", tableOutput("histTable")),
+                                  tabPanel("movidas",
+                                           sidebarLayout(position="right",
+                                                         
+                                                         sidebarPanel( 
+                                                           selectInput("select2", label = h3("Plot by Stat 1"), 
+                                                                       choices = list_choices,
+                                                                       selected = 1),
+                                                           
+                                                           selectInput("select3", label = h3("Plot by Stat 1"), 
+                                                                       choices = list_choices,
+                                                                       selected = 1)
+                                                         ),
+                                                         
+                                                      
+                                           mainPanel(plotOutput("PlotPlayer")
+                                                     ) 
+                                           )
+                                           ),
                                   tags$style(HTML("
       @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
        
@@ -65,6 +82,8 @@ a:hover {
     color: yellow;
 }"))
                       ))
+
+
 
 plotPanel <- tabPanel("Plot",
                       fluidRow(
@@ -136,8 +155,17 @@ server <- function(input, output, session) {
                 filter( Age %in% input$selAge,Pos %in% input$selPos,Tm %in% input$selTm)})
     output$data <- renderTable(datos2());
     a=reactive(as.vector(as.matrix(datos%>% select(input$select))))
-
-    output$histSummary <- renderPlot(hist(a()))
+    b=reactive(as.vector(as.matrix(datos%>% select(input$select2))))
+    c=reactive(as.vector(as.matrix(datos%>% select(input$select3))))
+    
+    output$histSummary <- renderPlot(hist(a(),main="Histogram of data player"))
+    output$PlotPlayer <- renderPlot(plot(x=b(),y=c(),main="Plot of data player",col = "#00AFBB"))
+    output$info <- renderText({
+      paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+    })
+    
+    
+    
     }
     
     
