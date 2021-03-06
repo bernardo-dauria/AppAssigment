@@ -37,11 +37,50 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                       
                       tabsetPanel(type = "tabs",id="SET",
                                              
-                                  tabPanel("Table", tableOutput("data")),
+                                  tabPanel("Table",
+                                           fluidPage(
+                                             sidebarLayout(
+                                               sidebarPanel(
+                                               
+                                               selectInput(
+                                               inputId = "selPos",
+                                               label = "Select the Position of the players",
+                                               multiple = TRUE,
+                                               choices = datos_Pos,
+                                               selected = c(datos_Pos[1]))
+                                               ,
+                                               selectInput(
+                                                 inputId = "selAge",
+                                                 label = "Select the Age of the players",
+                                                 multiple = TRUE,
+                                                 choices = datos_Age,
+                                                 selected = c(datos_Age[1])
+                                               )  , 
+                                               selectInput(
+                                                 inputId = "selTm",
+                                                 label = "Select the Team of the players",
+                                                 multiple = TRUE,
+                                                 choices = datos_Tm,
+                                                 selected = c(datos_Tm[1])
+                                                 
+                                               )
+                                             ),
+                                               mainPanel()
+                                               
+                                                         
+                                             ) ,          
+                                                         
+                                           
+                                           tableOutput("data")
+                                           
+                                           )
+                                           
+                                           
+                                           ),
                                   
 
                                   tabPanel("Histogram" ,
-                                           sidebarLayout(position="right",
+                                           sidebarLayout(position="left",
 
                                                           sidebarPanel( 
                                            selectInput("select", label = h3("Plot by Stat"), 
@@ -146,8 +185,7 @@ myHeader <- div(
 ui <- navbarPage("shiny App",
             
                  dataPanel,
-                 plotPanel,
-                 header = myHeader
+                 plotPanel
 )
 
 
