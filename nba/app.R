@@ -52,7 +52,7 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                            
                                             )
                                            ),
-                                  tabPanel("movidas",
+                                  tabPanel("Plot",
                                            sidebarLayout(position="right",
                                                          
                                                          sidebarPanel( 
@@ -66,9 +66,10 @@ dataPanel <- tabPanel("Data Players",     tags$style(HTML("
                                                          ),
                                                          
                                                       
-                                           mainPanel(plotOutput("PlotPlayer")
+                                           mainPanel(plotOutput("PlotPlayer", click = "plot_click"),
+                                                                verbatimTextOutput("info"))
                                                      ) 
-                                           )
+                                           
                                            ),
                                   tags$style(HTML("
       @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
