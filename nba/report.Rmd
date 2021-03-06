@@ -7,8 +7,11 @@ params:
  Namey:"input$select3"
 ---
 ```{r include=FALSE}
+library(shiny)
 library(tidyverse)
-
+library(shinyWidgets)
+library(magrittr)
+library(tableHTML)
 datosA=read.csv("DatosNBA.csv", sep=";", dec=".")
 datos=datosA[,2:30]
 datos %<>% mutate_at(c("Player", "Pos","Age","Tm"), as.factor)
@@ -22,8 +25,11 @@ datos_Tm = levels(datos$Tm) %>% str_sort()
 
 
 ```{r echo=FALSE}
-x=datos%>% select(params$Namex)
-y=datos%>% select(params$Namey)
+dist <- eval(parse(text=paste(params$Namex)))
+dist2 <- eval(parse(text=paste(params$Namey)))
+
+x=datos%>% select(dist)
+y=datos%>% select(dist2)
 
     plot(x=x,y=y,main="Plot of data player",xlab=Namex,ylab=input$select3,col = "#00AFBB")
 ```
