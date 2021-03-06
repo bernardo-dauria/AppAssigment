@@ -162,7 +162,7 @@ server <- function(input, output, session) {
     output$histSummary <- renderPlot(hist(a(),main="Histogram of data player",xlab=input$select))
     output$PlotPlayer <- renderPlot(plot(x=b(),y=c(),main="Plot of data player",xlab=input$select2,ylab=input$select3,col = "#00AFBB"))
     output$info <- renderText({
-      paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+      paste0(input$select2, "=", input$plot_click$x, "\n",input$select3,"=", input$plot_click$y)
     })
     
     
