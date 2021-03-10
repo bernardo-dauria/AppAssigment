@@ -237,6 +237,8 @@ server <- function(input, output, session) {
         # can happen when deployed).
         tempReport <- file.path(tempdir(), "report.Rmd")
         file.copy("report.Rmd", tempReport, overwrite = TRUE)
+        tempData <- file.path(tempdir(), "DatosNBA.csv")
+        file.copy("DatosNBA.csv", tempData, overwrite = TRUE)
         
         # Set up parameters to pass to Rmd document
         params <- list(
